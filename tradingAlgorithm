@@ -1,0 +1,19 @@
+ # list of all stocks
+with open('allStocks.txt', 'r') as file:
+    allStocksF = file.read()
+    allStocks = allStocksF.replace("\n", ',')
+    stockListT[:0] = (allStocks.split(','))
+    print(stockListT[1])
+# algo trader code.
+for i in range(len(stockListT)):
+    wantedStock = stockListT[i]
+    ticker = yf.Ticker(wantedStock)
+    stock1 = ticker.info
+    price = stock1.get('previousClose')
+    avg200 = stock1.get('twoHundredDayAverage')
+    if ((stock1.get('fiftyDayAverage')) > (avg200) + (avg200 / 4)):
+        try:
+            buy()
+            print("bought " + wantedStock)
+        except:
+            pass
