@@ -1,0 +1,90 @@
+import yfinance as yf
+
+allStocks = []
+stockListT = []
+
+# variable statement
+portfolio = []
+inputStock = True
+enterFalse = False
+
+
+# functions
+def buy():
+    global price, wantedStock
+
+    format = ((str(wantedStock) + ", " + str(price)))
+    portfolio.append(format)
+    with open('portfolio.txt', mode='w') as file:
+        file.write(str(portfolio).strip('["]'))
+    # money-=price
+
+
+def sell():
+    global wantedStock, price
+    stock1 = yf.Ticker(wantedStock)
+    information = (stock1.info)
+    format = ((str(wantedStock) + ", " + str(price) + ', '))
+    portfolio.append(format)
+    with open('portfolio.txt', mode='w') as file:
+        file.remove(str(portfolio).strip('["]'))
+    # money+=price
+
+
+# list of stocks
+
+
+with open("portfolio.txt", mode='r') as file:
+    content = file.read()
+portfolio.append(content.strip("'"))
+while (enterFalse == False):
+    option = int(input("your portfolio, input 1. Input wanted stock, input 2\n"))
+    if (option == 1):
+        # get the thing from the thing in the file thing, find the tickers, give current price and net gain/loss
+        # file saves ticker, current price
+        enterFalse = True
+    elif (option == 2):
+        enterFalse = True
+        while (inputStock == True):
+            wantedStock = str(input("Input wanted stock symbol\n"))
+            stock1 = yf.Ticker(wantedStock)
+            information = (stock1.info)
+            price = information.get('previousClose')
+            confirm = int(input("Confirm and end, 1. Confirm and continue, 2. End, 3"))
+            if (confirm == 1):
+                inputStock = False
+                format = ((str(wantedStock) + ", " + str(price) + ', '))
+                portfolio.append(format)
+                with open('portfolio.txt', mode='w') as file:
+                    file.write(str(portfolio).strip('["]'))
+                # money-=price
+                # file.write(str(price))
+            elif (confirm == 2):
+                inputStock = True
+                format = ((str(wantedStock) + ", " + str(price) + ', '))
+                portfolio.append(format)
+                with open('portfolio.txt', mode='w') as file:
+                    file.write(str(portfolio).strip('["]'))
+                # money-=price
+            elif (confirm == 3):
+                inputStock = False
+    elif (option == 3):
+        # list of all stocks
+        with open('allStocks.txt', 'r') as file:
+            allStocksF = file.read()
+            allStocks = allStocksF.replace("\n", ',')
+            stockListT[:0] = (allStocks.split(','))
+            print(stockListT[1])
+        # algo trader code.
+        for i in range(len(stockListT)):
+            wantedStock = stockListT[i]
+            ticker = yf.Ticker(wantedStock)
+            stock1 = ticker.info
+            price = stock1.get('previousClose')
+            avg200 = stock1.get('twoHundredDayAverage')
+            if ((stock1.get('fiftyDayAverage')) > (avg200) + (avg200 / 4)):
+                try:
+                    buy()
+                    print("bought " + wantedStock)
+                except:
+                    pass
